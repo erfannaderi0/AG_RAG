@@ -2,3 +2,4 @@
 venv
 client_secret.json
 token.json
+document_store/
