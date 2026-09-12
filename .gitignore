@@ -3,3 +3,5 @@ venv
 client_secret.json
 token.json
 document_store/
+docs/project_structure.txt
+docs/conceptual_architecture.txt
