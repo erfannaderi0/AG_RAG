@@ -5,3 +5,6 @@ token.json
 document_store/
 docs/project_structure.txt
 docs/conceptual_architecture.txt
+__pycache__/
+**/__pycache__/
+**/__pycache__/**

@@ -1,25 +1,24 @@
 # app/config.py
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
-
 class Settings(BaseSettings):
-    model_config = SettingsConfigDict(env_file=".env", env_file_encoding="utf-8")
+    model_config = SettingsConfigDict(
+        env_file=".env",
+        env_file_encoding="utf-8",
+        extra="ignore",   # <-- don't crash on unknown .env keys
+    )
 
-    # Database
-    database_url: str
-
-    # LLM (generation)
+    # --- things your code actually needs ---
     groq_api_key: str
-    groq_model: str = "llama-3.3-70b-versatile"
-
-    # Embeddings (local)
-    embedding_model_name: str = "all-MiniLM-L6-v2"
-    embedding_dim: int = 384
-
-    # Google Drive / Docs ingestion (OAuth desktop app)
-    google_credentials_path: str = "./client_secret.json"
-    google_token_path: str = "./token.json"
     google_drive_folder_id: str
 
+    # --- Google OAuth fields from .env ---
+    gdoc_client_id: str | None = None
+    gdoc_project_id: str | None = None
+    gdoc_auth_url: str | None = None
+    gdoc_token_url: str | None = None
+    gdoc_auth_provider: str | None = None
+    gdoc_client_secret: str | None = None
+    gdoc_redirect_uris: str | None = None
 
 settings = Settings()
