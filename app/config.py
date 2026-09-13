@@ -11,6 +11,7 @@ class Settings(BaseSettings):
     # --- things your code actually needs ---
     groq_api_key: str
     google_drive_folder_id: str
+    database_url: str
 
     # --- Google OAuth fields from .env ---
     gdoc_client_id: str | None = None
