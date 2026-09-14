@@ -8,3 +8,4 @@ docs/conceptual_architecture.txt
 __pycache__/
 **/__pycache__/
 **/__pycache__/**
+docs/tradeoff.txt
