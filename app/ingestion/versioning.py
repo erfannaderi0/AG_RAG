@@ -9,7 +9,6 @@ import logging
 from datetime import datetime, timezone
 from enum import Enum
 
-import psycopg
 import sys
 from pathlib import Path
 
@@ -28,8 +27,7 @@ class VersionStatus(str, Enum):
     UNCHANGED = "unchanged"
 
 
-def _get_connection():
-    return psycopg.connect(settings.database_url)
+from db.connection import get_connection
 
 
 def check_version(doc_id: str, new_hash: str) -> VersionStatus:
@@ -37,7 +35,7 @@ def check_version(doc_id: str, new_hash: str) -> VersionStatus:
     Look up the current stored hash for doc_id and compare against
     new_hash. Does not write anything — read-only check.
     """
-    with _get_connection() as conn:
+    with get_connection() as conn:
         with conn.cursor() as cur:
             cur.execute(
                 "SELECT current_hash FROM documents WHERE doc_id = %s",
@@ -53,6 +51,23 @@ def check_version(doc_id: str, new_hash: str) -> VersionStatus:
         return VersionStatus.UNCHANGED
 
     return VersionStatus.CHANGED
+
+
+def get_next_version(doc_id: str) -> int:
+    """
+    Read-only: returns what the next version number would be for
+    doc_id, without writing anything. Used by pipeline.py to tag
+    chunks with the correct version_number before storage.
+    """
+    with get_connection() as conn:
+        with conn.cursor() as cur:
+            cur.execute(
+                "SELECT current_version FROM documents WHERE doc_id = %s",
+                (doc_id,),
+            )
+            row = cur.fetchone()
+
+    return 1 if row is None else row[0] + 1
 
 
 def record_version(
@@ -71,7 +86,7 @@ def record_version(
     UNCHANGED document will still bump the version, so don't call it
     unconditionally.
     """
-    with _get_connection() as conn:
+    with get_connection() as conn:
         with conn.cursor() as cur:
             cur.execute(
                 "SELECT current_version FROM documents WHERE doc_id = %s",
