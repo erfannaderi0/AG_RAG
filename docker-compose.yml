@@ -1,0 +1,18 @@
+services:
+  postgres:
+    image: pgvector/pgvector:pg17
+    container_name: agrag-postgres
+
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: agrag
+
+    ports:
+      - "5434:5432"
+
+    volumes:
+      - agrag_postgres_data:/var/lib/postgresql/data
+
+volumes:
+  agrag_postgres_data:
