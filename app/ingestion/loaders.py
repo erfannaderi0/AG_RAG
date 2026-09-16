@@ -10,6 +10,7 @@ import logging
 from typing import List
 import sys
 from pathlib import Path
+import os
 
 from langchain_core.documents import Document
 from langchain_google_community import GoogleDriveLoader
@@ -36,12 +37,17 @@ def load_documents() -> List[Document]:
         Propagates any auth/API errors from GoogleDriveLoader so the
         pipeline caller can decide how to handle a failed ingestion run.
     """
+    os.environ.setdefault(
+        "GOOGLE_APPLICATION_CREDENTIALS", str(settings.google_credentials_path)
+    )
+
     loader = GoogleDriveLoader(
         folder_id=settings.google_drive_folder_id,
         credentials_path=settings.google_credentials_path,
         token_path=settings.google_token_path,
-        file_types=["document"],  # Google Docs only, not Sheets/Slides
-        recursive=False,           # top-level of the folder only for now
+        file_types=["document"],
+        recursive=False,
+        scopes=["https://www.googleapis.com/auth/drive.readonly"],
     )
 
     logger.info(
