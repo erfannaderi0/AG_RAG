@@ -12,6 +12,10 @@ class Settings(BaseSettings):
     groq_api_key: str
     google_drive_folder_id: str
     database_url: str
+    
+    # --- Embeddings (local) ---
+    embedding_model_name: str = "./all-MiniLM-L6-v2"
+    embedding_dim: int = 384
 
     # --- Google OAuth fields from .env ---
     gdoc_client_id: str | None = None
@@ -21,5 +25,7 @@ class Settings(BaseSettings):
     gdoc_auth_provider: str | None = None
     gdoc_client_secret: str | None = None
     gdoc_redirect_uris: str | None = None
+    google_credentials_path: str
+    google_token_path: str
 
 settings = Settings()
