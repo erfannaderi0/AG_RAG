@@ -24,7 +24,9 @@ CREATE TABLE document_chunks (
     chunk_index INTEGER NOT NULL,
     chunk_text TEXT NOT NULL,
     embedding VECTOR(384),
+    chunk_tsv TSVECTOR GENERATED ALWAYS AS (to_tsvector('english', chunk_text)) STORED,
     created_at TIMESTAMPTZ NOT NULL DEFAULT now()
 );
 
 CREATE INDEX ON document_chunks USING hnsw (embedding vector_cosine_ops);
+CREATE INDEX ON document_chunks USING GIN (chunk_tsv);
