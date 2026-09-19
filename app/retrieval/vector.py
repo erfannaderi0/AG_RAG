@@ -111,8 +111,8 @@ def similarity_search(query: str, k: int = 5) -> list[Document]:
         with conn.cursor() as cur:
             cur.execute(
                 """
-                SELECT chunk_text, doc_id, version_number, chunk_index,
-                       embedding <=> %s AS distance
+                SELECT id, chunk_text, doc_id, version_number, chunk_index,
+                    embedding <=> %s AS distance
                 FROM document_chunks
                 ORDER BY distance
                 LIMIT %s
@@ -123,8 +123,8 @@ def similarity_search(query: str, k: int = 5) -> list[Document]:
 
     return [
         Document(
-            page_content=row[0],
-            metadata={"doc_id": row[1], "version_number": row[2], "chunk_index": row[3], "distance": row[4]},
+            page_content=row[1],
+            metadata={"id": row[0], "doc_id": row[2], "version_number": row[3], "chunk_index": row[4], "distance": row[5]},
         )
         for row in rows
     ]
