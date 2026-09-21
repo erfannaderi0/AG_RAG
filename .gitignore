@@ -9,5 +9,5 @@ __pycache__/
 **/__pycache__/
 **/__pycache__/**
 docs/tradeoff.txt
-all-MiniLM-L6-v2
+models
 credentials

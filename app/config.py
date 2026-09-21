@@ -1,5 +1,8 @@
 # app/config.py
+from pathlib import Path
 from pydantic_settings import BaseSettings, SettingsConfigDict
+
+BASE_DIR = Path(__file__).resolve().parent.parent  # project root = D:\github_projects\AG_RAG
 
 class Settings(BaseSettings):
     model_config = SettingsConfigDict(
@@ -14,7 +17,8 @@ class Settings(BaseSettings):
     database_url: str
     
     # --- Embeddings (local) ---
-    embedding_model_name: str = "./all-MiniLM-L6-v2"
+    embedding_model_name: str = str(BASE_DIR / "models" / "all-MiniLM-L6-v2")
+    reranker_model_name: str = str(BASE_DIR / "models" / "ms-marco-MiniLM-L6-v2")
     embedding_dim: int = 384
 
     # --- Google OAuth fields from .env ---
