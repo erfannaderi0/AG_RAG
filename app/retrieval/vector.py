@@ -112,7 +112,7 @@ def similarity_search(query: str, k: int = 5) -> list[Document]:
             cur.execute(
                 """
                 SELECT id, chunk_text, doc_id, version_number, chunk_index,
-                    embedding <=> %s AS distance
+                    embedding <=> %s::vector AS distance
                 FROM document_chunks
                 ORDER BY distance
                 LIMIT %s
