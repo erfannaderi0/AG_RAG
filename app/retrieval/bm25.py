@@ -30,10 +30,11 @@ def bm25_search(query: str, k: int = 5) -> list[Document]:
         with conn.cursor() as cur:
             cur.execute(
                 """
-                SELECT id, chunk_text, doc_id, version_number, chunk_index,
-                       ts_rank_cd(chunk_tsv, plainto_tsquery('english', %s)) AS rank
-                FROM document_chunks
-                WHERE chunk_tsv @@ plainto_tsquery('english', %s)
+                SELECT dc.id, dc.chunk_text, dc.doc_id, dc.version_number, dc.chunk_index,
+                       ts_rank_cd(dc.chunk_tsv, plainto_tsquery('english', %s)) AS rank, d.title
+                FROM document_chunks dc
+                JOIN documents d ON d.doc_id = dc.doc_id
+                WHERE dc.chunk_tsv @@ plainto_tsquery('english', %s)
                 ORDER BY rank DESC
                 LIMIT %s
                 """,
@@ -46,7 +47,7 @@ def bm25_search(query: str, k: int = 5) -> list[Document]:
     return [
         Document(
             page_content=row[1],
-            metadata={"id": row[0], "doc_id": row[2], "version_number": row[3], "chunk_index": row[4], "rank": row[5]},
+            metadata={"id": row[0], "doc_id": row[2], "version_number": row[3], "chunk_index": row[4], "rank": row[5], "title": row[6]},
         )
         for row in rows
     ]
