@@ -40,6 +40,7 @@ class Settings(BaseSettings):
     # --- Guardrails (smaller/faster Groq model for input + output checks) ---
     groq_guardrail_model_name: str = "openai/gpt-oss-20b"
     groq_guardrail_temperature: float = 0.0
-    groq_guardrail_max_tokens: int = 256
+    groq_guardrail_max_tokens: int = 512
+    groq_guardrail_reasoning_effort: str = "low"
 
 settings = Settings()

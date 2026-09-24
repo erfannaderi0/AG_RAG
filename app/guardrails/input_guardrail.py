@@ -38,6 +38,8 @@ _llm = ChatGroq(
     model=settings.groq_guardrail_model_name,
     temperature=settings.groq_guardrail_temperature,
     max_tokens=settings.groq_guardrail_max_tokens,
+    reasoning_effort=settings.groq_guardrail_reasoning_effort,
+    reasoning_format="hidden",
 )
 
 _chain = input_guardrail_prompt | _llm
