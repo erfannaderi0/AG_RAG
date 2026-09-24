@@ -31,10 +31,15 @@ class Settings(BaseSettings):
     gdoc_redirect_uris: str | None = None
     google_credentials_path: str
     google_token_path: str
-    
+
     # --- Generation (Groq via langchain_groq) ---
     groq_model_name: str = "openai/gpt-oss-120b"
     groq_temperature: float = 0.1
     groq_max_tokens: int = 1024
+
+    # --- Guardrails (smaller/faster Groq model for input + output checks) ---
+    groq_guardrail_model_name: str = "openai/gpt-oss-20b"
+    groq_guardrail_temperature: float = 0.0
+    groq_guardrail_max_tokens: int = 256
 
 settings = Settings()
