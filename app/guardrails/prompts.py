@@ -62,7 +62,7 @@ redundancy) without changing its meaning or adding new information.
 If it is NOT grounded: say so.
 
 Respond with ONLY a JSON object, no other text:
-{{"grounded": true or false, "final_answer": "the polished answer if grounded, otherwise an empty string"}}"""
+{{"grounded": true or false, "final_answer": "the polished answer if grounded, otherwise an empty string", "reason": "one short phrase explaining the groundedness verdict"}}"""
 
 output_guardrail_prompt = ChatPromptTemplate.from_messages(
     [

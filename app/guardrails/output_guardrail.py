@@ -69,12 +69,14 @@ def _parse_verdict(raw: str) -> dict:
     return json.loads(match.group(0))
 
 
-def check_response(question: str, answer: str, documents: list[Document]) -> tuple[bool, str]:
+def check_response(question: str, answer: str, documents: list[Document]) -> tuple[bool, str, str | None]:
     """
-    Returns (passed, final_answer).
+    Returns (passed, final_answer, reason).
     - passed=True: final_answer is the (possibly lightly polished) answer.
     - passed=False: final_answer is the fixed fallback message, regardless
       of what the model returned in that field.
+    - reason is the model's short explanation for its groundedness verdict
+      (None if parsing failed, since there's no verdict to explain).
     On any parsing failure, fails open (passes the original answer through
     unmodified) with a warning logged.
     """
@@ -86,15 +88,16 @@ def check_response(question: str, answer: str, documents: list[Document]) -> tup
         grounded = bool(verdict["grounded"])
     except (ValueError, KeyError, json.JSONDecodeError) as e:
         logger.warning("output guardrail: failed to parse verdict (%s), failing open. raw=%r", e, raw)
-        return True, answer
+        return True, answer, None
 
-    logger.info("check_response: question=%r -> grounded=%s", question, grounded)
+    reason = verdict.get("reason")
+    logger.info("check_response: question=%r -> grounded=%s reason=%r", question, grounded, reason)
 
     if not grounded:
-        return False, FIXED_FALLBACK_MESSAGE
+        return False, FIXED_FALLBACK_MESSAGE, reason
 
     final_answer = verdict.get("final_answer") or answer
-    return True, final_answer
+    return True, final_answer, reason
 
 
 if __name__ == "__main__":
@@ -104,6 +107,6 @@ if __name__ == "__main__":
     q = "business expense meals"
     docs = retrieve(q)
     answer = generate(q, docs)
-    passed, final_answer = check_response(q, answer, docs)
-    print(f"passed={passed}")
+    passed, final_answer, reason = check_response(q, answer, docs)
+    print(f"passed={passed}, reason={reason!r}")
     print(final_answer)
