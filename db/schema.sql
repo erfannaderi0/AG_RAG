@@ -30,3 +30,19 @@ CREATE TABLE document_chunks (
 
 CREATE INDEX ON document_chunks USING hnsw (embedding vector_cosine_ops);
 CREATE INDEX ON document_chunks USING GIN (chunk_tsv);
+
+-- Guardrail decision log: one row per guardrail check (input screening or
+-- output groundedness), used by evaluation/metrics.py to compute things
+-- like rejection-reason breakdowns over time. Not linked to the RAG
+-- document tables above — this is pipeline telemetry, not document data.
+CREATE TABLE guardrail_logs (
+    id SERIAL PRIMARY KEY,
+    query TEXT NOT NULL,
+    stage TEXT NOT NULL CHECK (stage IN ('input', 'output')),
+    passed BOOLEAN NOT NULL,
+    reason TEXT,
+    created_at TIMESTAMPTZ NOT NULL DEFAULT now()
+);
+
+CREATE INDEX ON guardrail_logs (stage, passed);
+CREATE INDEX ON guardrail_logs (created_at);
